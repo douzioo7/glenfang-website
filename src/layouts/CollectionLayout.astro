@@ -1,0 +1,22 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+
+interface Props { eyebrow: string; title: string; description: string; posts: (CollectionEntry<'reading'> | CollectionEntry<'cooking'> | CollectionEntry<'notes'>)[]; }
+const { eyebrow, title, description, posts } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <main class="shell">
+    <section class="page-hero"><p class="eyebrow">{eyebrow}</p><h1>{title}</h1><p>{description}</p></section>
+    <section class="articles" aria-label={`${title}文章列表`}>
+      <div class="list-heading"><span>全部记录</span><span>{posts.length} 篇</span></div>
+      {posts.length ? posts.map((post) => <ArticleCard post={post} />) : <div class="empty"><strong>这里还没有留下记录。</strong><p>新的内容，会慢慢出现在这里。</p></div>}
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .articles { padding: 48px 0 100px; }.list-heading { display: flex; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--ink); color: var(--muted); font-size: .76rem; letter-spacing: .1em; }.empty { padding: 75px 0; text-align: center; color: var(--muted); }.empty strong { color: var(--ink); font-family: Georgia, "Noto Serif SC", serif; font-size: 1.45rem; font-weight: 400; }.empty p { margin: 7px 0; font-size: .9rem; }
+</style>

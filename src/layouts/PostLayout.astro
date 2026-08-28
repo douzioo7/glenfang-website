@@ -1,0 +1,39 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TwikooComments from '../components/TwikooComments.astro';
+
+interface Props {
+  title: string; description: string; pubDate: Date; category: string;
+  accent: 'reading' | 'cooking' | 'notes'; cover?: string; coverAlt?: string; tags?: string[];
+  previous?: { title: string; href: string }; next?: { title: string; href: string };
+}
+const { title, description, pubDate, category, accent, cover, coverAlt, tags = [], previous, next } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} image={cover}>
+  <main class={`article-shell ${accent}`}>
+    <article>
+      <header class="article-header">
+        <div class="article-meta"><span>{category}</span><time datetime={pubDate.toISOString()}>{pubDate.toLocaleDateString('zh-CN')}</time></div>
+        <h1>{title}</h1>
+        <p class="description">{description}</p>
+        {tags.length > 0 && <div class="tags">{tags.map((tag) => <span>#{tag}</span>)}</div>}
+      </header>
+      {cover && <img class="article-cover" src={cover} alt={coverAlt || ''} />}
+      <div class="prose"><slot /></div>
+      <nav class="article-navigation" aria-label="文章导航">
+        {previous ? <a href={previous.href}><small>上一篇</small><span>← {previous.title}</span></a> : <span></span>}
+        {next && <a class="next" href={next.href}><small>下一篇</small><span>{next.title} →</span></a>}
+      </nav>
+      <TwikooComments />
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  .article-shell { width: min(760px, calc(100% - 48px)); margin: 0 auto; }.article-header { padding: 88px 0 38px; }.article-meta { display: flex; gap: 16px; color: var(--muted); font-size: .78rem; }.article-meta span { color: var(--green); font-weight: 700; }.cooking .article-meta span { color: var(--orange); }.notes .article-meta span { color: var(--violet); }
+  h1 { margin: 18px 0; font-family: Georgia, "Noto Serif SC", serif; font-size: clamp(2.55rem, 6vw, 4.6rem); font-weight: 400; letter-spacing: -.055em; line-height: 1.13; }.description { margin: 0; color: var(--muted); font-size: 1.1rem; line-height: 1.85; }.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; color: var(--muted); font-size: .8rem; }.article-cover { width: 100%; max-height: 470px; border-radius: 16px; object-fit: cover; }
+  .prose { padding-top: 48px; font-size: 1.02rem; line-height: 1.95; }.prose :global(h2) { margin: 56px 0 18px; font-family: Georgia, "Noto Serif SC", serif; font-size: 1.82rem; font-weight: 400; line-height: 1.35; }.prose :global(h3) { margin: 38px 0 14px; font-size: 1.22rem; }.prose :global(p) { margin: 0 0 23px; }.prose :global(ul), .prose :global(ol) { margin: 0 0 24px; padding-left: 1.4em; }.prose :global(li + li) { margin-top: 7px; }.prose :global(blockquote) { margin: 32px 0; padding: 14px 22px; border-left: 3px solid var(--green); background: rgba(99, 125, 81, .08); color: var(--muted); }.cooking .prose :global(blockquote) { border-color: var(--orange); background: rgba(169, 104, 57, .08); }.notes .prose :global(blockquote) { border-color: var(--violet); background: rgba(121, 101, 139, .08); }.prose :global(img) { margin: 30px auto; border-radius: 12px; }.prose :global(a) { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--green) 55%, transparent); text-underline-offset: 3px; }
+  .article-navigation { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 66px; padding: 25px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }.article-navigation a { display: grid; gap: 4px; color: var(--ink); }.article-navigation .next { text-align: right; }.article-navigation small { color: var(--muted); }.article-navigation span { font-family: Georgia, "Noto Serif SC", serif; font-size: 1rem; }
+  @media (max-width: 600px) { .article-shell { width: min(100% - 32px, 760px); }.article-header { padding: 54px 0 30px; }.prose { padding-top: 36px; font-size: .98rem; }.article-navigation { gap: 12px; }.article-navigation span { font-size: .9rem; } }
+</style>

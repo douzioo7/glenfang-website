@@ -1,0 +1,15 @@
+---
+import { render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+import { collections } from '../../config/site';
+import { articleNeighbors, getPublishedArticles } from '../../lib/articles';
+
+export async function getStaticPaths() {
+  return (await getPublishedArticles('reading')).map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { previous, next } = articleNeighbors(await getPublishedArticles('reading'), post.id, 'reading');
+---
+
+<PostLayout title={post.data.title} description={post.data.description} pubDate={post.data.pubDate} category={collections.reading.name} accent="reading" cover={post.data.cover} coverAlt={post.data.coverAlt} tags={post.data.tags} previous={previous} next={next}><Content /></PostLayout>

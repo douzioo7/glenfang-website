@@ -1,0 +1,23 @@
+---
+const endpoint = import.meta.env.PUBLIC_TWIKOO_ENV_ID;
+const commentPath = Astro.url.pathname;
+---
+
+{endpoint && (
+  <section class="comments" aria-label="评论区">
+    <p class="eyebrow">CONVERSATION</p>
+    <h2>留下一句话</h2>
+    <div id="twikoo" data-endpoint={endpoint} data-path={commentPath}></div>
+    <script src="https://cdn.jsdelivr.net/npm/twikoo@1.7.20/dist/twikoo.min.js" is:inline></script>
+    <script is:inline>
+      const mount = document.querySelector('#twikoo');
+      if (mount && window.twikoo) {
+        window.twikoo.init({ envId: mount.dataset.endpoint, el: '#twikoo', path: mount.dataset.path, lang: 'zh-CN' });
+      }
+    </script>
+  </section>
+)}
+
+<style>
+  .comments { margin-top: 76px; padding-top: 42px; border-top: 1px solid var(--line); }.comments h2 { margin: 0 0 26px; font-family: Georgia, "Noto Serif SC", serif; font-size: 1.8rem; font-weight: 400; }
+</style>

@@ -1,0 +1,14 @@
+---
+import CollectionLayout from '../../layouts/CollectionLayout.astro';
+import { collections } from '../../config/site';
+import { getPublishedArticles } from '../../lib/articles';
+
+const posts = await getPublishedArticles('cooking');
+---
+
+<CollectionLayout
+  eyebrow={`02 · ${collections.cooking.eyebrow}`}
+  title={collections.cooking.name}
+  description={collections.cooking.description}
+  posts={posts}
+/>

@@ -1,0 +1,14 @@
+---
+import CollectionLayout from '../../layouts/CollectionLayout.astro';
+import { collections } from '../../config/site';
+import { getPublishedArticles } from '../../lib/articles';
+
+const posts = await getPublishedArticles('reading');
+---
+
+<CollectionLayout
+  eyebrow={`01 · ${collections.reading.eyebrow}`}
+  title={collections.reading.name}
+  description={collections.reading.description}
+  posts={posts}
+/>

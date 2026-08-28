@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { tools } from '../../config/site';
+---
+
+<BaseLayout title="实用工具" description="豆子整理的几个实用在线工具。">
+  <main class="shell"><section class="page-hero"><p class="eyebrow">SMALL TOOLS, LESS FRICTION</p><h1>实用工具</h1><p>一些独立运行的小工具，帮你把重复的小任务做得更轻松。</p></section><section class="tool-grid">{tools.map((tool) => <a href={tool.url} target="_blank" rel="noreferrer"><span class="icon">{tool.icon}</span><h2>{tool.title}</h2><p>{tool.description}</p><strong>打开工具 <span>↗</span></strong></a>)}</section></main>
+</BaseLayout>
+
+<style>
+  .tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; padding: 52px 0 105px; }.tool-grid a { min-height: 250px; padding: 27px; border: 1px solid var(--line); border-radius: 17px; background: var(--card); transition: transform .2s ease, box-shadow .2s ease; }.tool-grid a:hover { transform: translateY(-4px); box-shadow: 0 14px 26px rgba(54, 45, 33, .09); }.icon { color: var(--blue); font-size: 2.3rem; }.tool-grid h2 { margin: 38px 0 7px; font-family: Georgia, "Noto Serif SC", serif; font-size: 1.55rem; font-weight: 400; }.tool-grid p { min-height: 50px; margin: 0; color: var(--muted); font-size: .88rem; }.tool-grid strong { display: block; margin-top: 24px; font-size: .84rem; }.tool-grid strong span { margin-left: 5px; } @media (max-width: 760px) { .tool-grid { grid-template-columns: 1fr; padding: 38px 0 70px; }.tool-grid a { min-height: auto; }.tool-grid h2 { margin-top: 25px; }.tool-grid p { min-height: 0; } }
+</style>

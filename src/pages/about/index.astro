@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { site } from '../../config/site';
+---
+
+<BaseLayout title="关于" description={`关于${site.name}。`}>
+  <main class="shell"><section class="page-hero"><p class="eyebrow">ABOUT THIS LITTLE SPACE</p><h1>关于</h1><p>{site.about.title}</p></section><section class="about"><div class="copy"><p>{site.about.description}</p><p>愿这里的每一次打开，都像给忙碌的日子留了一点安静的空白。</p></div>{(site.contact.email || site.contact.github) && <aside><p class="eyebrow">KEEP IN TOUCH</p>{site.contact.email && <a href={`mailto:${site.contact.email}`}>Email <span>↗</span></a>}{site.contact.github && <a href={site.contact.github} target="_blank" rel="noreferrer">GitHub <span>↗</span></a>}</aside>}</section></main>
+</BaseLayout>
+
+<style>
+  .about { display: grid; grid-template-columns: minmax(0, 620px) 220px; justify-content: space-between; gap: 50px; padding: 62px 0 110px; }.copy { font-family: Georgia, "Noto Serif SC", serif; font-size: 1.36rem; line-height: 1.9; }.copy p { margin: 0 0 28px; }.about aside { align-self: start; padding: 18px 0; border-top: 1px solid var(--ink); }.about aside a { display: block; margin-top: 12px; font-size: .9rem; }.about aside a span { margin-left: 5px; } @media (max-width: 700px) { .about { grid-template-columns: 1fr; gap: 18px; padding: 42px 0 72px; }.copy { font-size: 1.18rem; } }
+</style>

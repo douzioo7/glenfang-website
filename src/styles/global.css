@@ -1,0 +1,43 @@
+:root {
+  --paper: #f7f3eb;
+  --ink: #292720;
+  --muted: #69655d;
+  --line: #ded8cd;
+  --card: rgba(255, 253, 248, 0.72);
+  --green: #637d51;
+  --orange: #a96839;
+  --violet: #79658b;
+  --blue: #527a94;
+  font-family: "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  min-width: 320px;
+  margin: 0;
+  line-height: 1.7;
+  background:
+    radial-gradient(circle at 92% 8%, rgba(207, 183, 144, 0.2), transparent 29rem),
+    radial-gradient(circle at 7% 48%, rgba(139, 163, 119, 0.12), transparent 27rem),
+    var(--paper);
+}
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+button, input, textarea { font: inherit; }
+
+.shell { width: min(1160px, calc(100% - 48px)); margin: 0 auto; }
+.eyebrow { margin: 0 0 10px; color: var(--muted); font-size: .72rem; font-weight: 700; letter-spacing: .16em; }
+.page-hero { padding: 82px 0 54px; border-bottom: 1px solid var(--line); }
+.page-hero h1 { max-width: 750px; margin: 0; font-family: Georgia, "Noto Serif SC", serif; font-size: clamp(3rem, 7vw, 5.8rem); font-weight: 400; letter-spacing: -.055em; line-height: 1.05; }
+.page-hero p:last-child { max-width: 620px; margin: 22px 0 0; color: var(--muted); font-size: 1.05rem; }
+.section-title { margin: 0; font-family: Georgia, "Noto Serif SC", serif; font-size: clamp(1.75rem, 3vw, 2.4rem); font-weight: 400; letter-spacing: -.04em; }
+.external-mark { font-size: .85em; vertical-align: .12em; }
+
+@media (max-width: 700px) {
+  .shell { width: min(100% - 32px, 1160px); }
+  .page-hero { padding: 54px 0 42px; }
+}

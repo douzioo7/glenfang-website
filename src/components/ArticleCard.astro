@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { collections } from '../config/site';
+
+interface Props { post: CollectionEntry<'reading'> | CollectionEntry<'cooking'> | CollectionEntry<'notes'>; }
+const { post } = Astro.props;
+const category = collections[post.collection];
+---
+
+<a class={`article-card ${category.accent}`} href={`/${post.collection}/${post.id}/`}>
+  {post.data.cover ? <img class="cover" src={post.data.cover} alt={post.data.coverAlt || ''} loading="lazy" /> : <div class="cover fallback" aria-hidden="true"><span>{post.collection === 'reading' ? '◒' : post.collection === 'cooking' ? '◌' : '✎'}</span></div>}
+  <div class="content">
+    <div class="meta"><span>{category.name}</span><time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString('zh-CN')}</time></div>
+    <h2>{post.data.title}</h2>
+    <p>{post.data.description}</p>
+    {post.data.tags?.length > 0 && <div class="tags">{post.data.tags.slice(0, 3).map((tag) => <span>#{tag}</span>)}</div>}
+  </div>
+</a>
+
+<style>
+  .article-card { display: grid; grid-template-columns: 188px 1fr; gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--line); transition: background .2s ease, padding .2s ease; }
+  .article-card:hover { padding-right: 10px; padding-left: 10px; background: rgba(255, 255, 255, .36); }
+  .cover { width: 188px; height: 124px; border-radius: 12px; object-fit: cover; }
+  .fallback { display: grid; place-items: center; background: rgba(99, 125, 81, .12); color: var(--green); font-size: 2rem; }
+  .cooking .fallback { background: rgba(169, 104, 57, .12); color: var(--orange); }.notes .fallback { background: rgba(121, 101, 139, .12); color: var(--violet); }
+  .content { align-self: center; }.meta { display: flex; gap: 14px; color: var(--muted); font-size: .75rem; }.meta span { color: var(--green); font-weight: 700; }.cooking .meta span { color: var(--orange); }.notes .meta span { color: var(--violet); }
+  h2 { margin: 5px 0; font-family: Georgia, "Noto Serif SC", serif; font-size: 1.36rem; font-weight: 400; line-height: 1.35; }.content p { margin: 0; color: var(--muted); font-size: .88rem; }.tags { display: flex; gap: 9px; margin-top: 9px; color: var(--muted); font-size: .73rem; }
+  @media (max-width: 570px) { .article-card { grid-template-columns: 104px 1fr; gap: 15px; }.cover { width: 104px; height: 100px; }.content p { display: none; } h2 { font-size: 1.16rem; } }
+</style>

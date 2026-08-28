@@ -1,0 +1,30 @@
+---
+import { site } from '../config/site';
+---
+
+<footer class="site-footer shell">
+  <div class="footer-main">
+    <a class="brand" href="/"><img src="/logo.ico" alt="" width="32" height="32" /><strong>{site.name}</strong></a>
+    <p>记录那些值得留下来的东西。</p>
+  </div>
+  <div class="footer-bottom">
+    <span>© {new Date().getFullYear()} {site.author}</span>
+    <div class="links">
+      {site.contact.github && <a href={site.contact.github} target="_blank" rel="noreferrer">GitHub <span class="external-mark">↗</span></a>}
+      {site.contact.email && <a href={`mailto:${site.contact.email}`}>Email</a>}
+      <a href="/about/">关于本站</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer { padding: 42px 0 34px; border-top: 1px solid var(--line); color: var(--muted); font-size: .84rem; }
+  .footer-main, .footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); }
+  .brand img { width: 32px; height: 32px; object-fit: contain; }
+  .footer-main p { margin: 0; }
+  .footer-bottom { margin-top: 36px; }
+  .links { display: flex; gap: 20px; }
+  .links a:hover { color: var(--ink); }
+  @media (max-width: 600px) { .footer-main, .footer-bottom { align-items: flex-start; flex-direction: column; gap: 14px; } .footer-bottom { margin-top: 28px; } }
+</style>

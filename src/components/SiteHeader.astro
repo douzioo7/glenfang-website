@@ -1,0 +1,45 @@
+---
+import { site } from '../config/site';
+
+const { currentPath = '/' } = Astro.props;
+const links = [
+  { href: '/reading/', label: '读书笔记' },
+  { href: '/cooking/', label: '菜谱学习' },
+  { href: '/notes/', label: '随笔' },
+  { href: '/tools/', label: '实用工具' },
+  { href: '/about/', label: '关于' },
+];
+---
+
+<header class="site-header shell">
+  <a class="brand" href="/" aria-label={`回到${site.name}首页`}>
+    <img src="/logo.ico" alt="" width="42" height="42" />
+    <span>{site.name}</span>
+  </a>
+  <details class="menu">
+    <summary aria-label="打开导航菜单"><span></span><span></span><span></span></summary>
+    <nav aria-label="主导航">
+      {links.map((link) => <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>{link.label}</a>)}
+    </nav>
+  </details>
+  <nav class="desktop-nav" aria-label="主导航">
+    {links.map((link) => <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>{link.label}</a>)}
+  </nav>
+</header>
+
+<style>
+  .site-header { display: flex; align-items: center; justify-content: space-between; min-height: 94px; border-bottom: 1px solid var(--line); }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-size: .98rem; font-weight: 700; letter-spacing: -.02em; }
+  .brand img { width: 42px; height: 42px; object-fit: contain; }
+  .desktop-nav { display: flex; align-items: center; gap: 26px; }
+  nav a { color: var(--muted); font-size: .9rem; transition: color .2s ease; }
+  nav a:hover, nav a[aria-current="page"] { color: var(--ink); }
+  nav a[aria-current="page"] { font-weight: 700; }
+  .menu { display: none; position: relative; }
+  .menu summary { display: grid; gap: 4px; width: 40px; padding: 11px 8px; cursor: pointer; list-style: none; }
+  .menu summary::-webkit-details-marker { display: none; }
+  .menu summary span { height: 1px; background: var(--ink); }
+  .menu nav { position: absolute; right: 0; top: 48px; z-index: 10; display: grid; width: 165px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 14px; background: #fffdf8; box-shadow: 0 14px 30px rgba(54, 45, 33, .12); }
+  .menu nav a { padding: 8px 0; }
+  @media (max-width: 760px) { .site-header { min-height: 76px; } .desktop-nav { display: none; } .menu { display: block; } .brand img { width: 36px; height: 36px; } }
+</style>
