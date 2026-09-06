@@ -1,23 +1,58 @@
 ---
-const endpoint = import.meta.env.PUBLIC_TWIKOO_ENV_ID;
+import { site } from '../config/site';
+
+const endpoint = import.meta.env.PUBLIC_TWIKOO_ENV_ID?.trim() || site.comments.endpoint;
 const commentPath = Astro.url.pathname;
 ---
 
-{endpoint && (
+{site.comments.enabled && endpoint && (
   <section class="comments" aria-label="评论区">
     <p class="eyebrow">CONVERSATION</p>
     <h2>留下一句话</h2>
+    <p id="comment-status" class="comment-status" role="status">正在加载评论…</p>
+    <noscript>请启用 JavaScript 后查看或发表评论。</noscript>
     <div id="twikoo" data-endpoint={endpoint} data-path={commentPath}></div>
-    <script src="https://cdn.jsdelivr.net/npm/twikoo@1.7.20/dist/twikoo.min.js" is:inline></script>
     <script is:inline>
-      const mount = document.querySelector('#twikoo');
-      if (mount && window.twikoo) {
-        window.twikoo.init({ envId: mount.dataset.endpoint, el: '#twikoo', path: mount.dataset.path, lang: 'zh-CN' });
-      }
+      (() => {
+        const mount = document.querySelector('#twikoo');
+        const status = document.querySelector('#comment-status');
+        if (!mount || !status) return;
+
+        const showError = () => {
+          status.hidden = false;
+          status.textContent = '评论暂时无法加载，请稍后刷新页面重试。';
+        };
+        const timeout = window.setTimeout(showError, 15000);
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/twikoo@1.7.20/dist/twikoo.min.js';
+        script.async = true;
+        script.onload = async () => {
+          try {
+            await window.twikoo.init({
+              envId: mount.dataset.endpoint,
+              el: '#twikoo',
+              path: mount.dataset.path,
+              lang: 'zh-CN',
+            });
+            status.hidden = true;
+          } catch {
+            showError();
+          } finally {
+            window.clearTimeout(timeout);
+          }
+        };
+        script.onerror = () => {
+          window.clearTimeout(timeout);
+          showError();
+        };
+        document.head.append(script);
+      })();
     </script>
   </section>
 )}
 
 <style>
+  .comment-status { color: var(--muted); font-size: 1rem; }
+  .comments :global(.twikoo) { color: var(--ink); }
   .comments { margin-top: 76px; padding-top: 42px; border-top: 1px solid var(--line); }.comments h2 { margin: 0 0 26px; font-family: Georgia, "Noto Serif SC", serif; font-size: 1.8rem; font-weight: 400; }
 </style>

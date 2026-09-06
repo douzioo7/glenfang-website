@@ -3,6 +3,10 @@ export const site = {
   url: 'https://glenfang.cc',
   description: '记录阅读、厨房里的练习、随笔与让生活更轻松的小工具。',
   author: '豆子',
+  comments: {
+    enabled: true,
+    endpoint: 'https://comments.glenfang.cc',
+  },
   intro: '把读过的书、做过的菜、偶然想到的事，慢慢收进这一方小小的空间。',
   about: {
     title: '留一点位置，给认真生活。',

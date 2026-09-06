@@ -28,4 +28,4 @@ npm run astro -- check
 npm run build
 ```
 
-站点、作者介绍和公开联系方式统一维护在 `src/config/site.ts`。评论服务地址使用 `PUBLIC_TWIKOO_ENV_ID` 环境变量，参见 `.env.example` 和 [DEPLOYMENT.md](./DEPLOYMENT.md)。
+站点、作者介绍、公开联系方式和评论开关统一维护在 `src/config/site.ts`。评论默认连接 `https://comments.glenfang.cc`，无需在服务器额外设置构建变量；可通过 `PUBLIC_TWIKOO_ENV_ID` 覆盖地址。设置 `site.comments.enabled` 为 `false` 可关闭评论入口。参见 `.env.example` 和 [DEPLOYMENT.md](./DEPLOYMENT.md)。

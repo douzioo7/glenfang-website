@@ -1,0 +1,22 @@
+services:
+  twikoo:
+    image: imaegoo/twikoo:1.7.20
+    container_name: twikoo
+    restart: unless-stopped
+    environment:
+      TWIKOO_PORT: "8080"
+      TWIKOO_DATA: /app/data
+      TWIKOO_IP_HEADERS: '["headers.cf-connecting-ip"]'
+    volumes:
+      - ./data:/app/data
+    networks:
+      - npm_network
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  npm_network:
+    external: true
