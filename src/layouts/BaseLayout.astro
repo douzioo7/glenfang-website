@@ -4,10 +4,30 @@ import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import { site } from '../config/site';
 
-interface Props { title?: string; description?: string; image?: string; }
-const { title, description = site.description, image } = Astro.props;
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  type?: 'website' | 'article';
+  pubDate?: Date;
+  noindex?: boolean;
+}
+const { title, description = site.description, image, imageAlt, type = 'website', pubDate, noindex = false } = Astro.props;
 const pageTitle = title ? `${title} · ${site.name}` : site.name;
 const canonical = new URL(Astro.url.pathname, site.url).toString();
+const imageUrl = image ? new URL(image, site.url).toString() : undefined;
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': type === 'article' ? 'BlogPosting' : 'WebPage',
+  name: pageTitle,
+  ...(type === 'article' ? { headline: title, datePublished: pubDate?.toISOString(), mainEntityOfPage: canonical } : {}),
+  description,
+  url: canonical,
+  inLanguage: 'zh-CN',
+  author: { '@type': 'Person', name: site.author, url: new URL('/about/', site.url).toString() },
+  ...(imageUrl ? { image: imageUrl } : {}),
+};
 ---
 
 <!doctype html>
@@ -17,13 +37,26 @@ const canonical = new URL(Astro.url.pathname, site.url).toString();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#f7f3eb" />
-    <link rel="canonical" href={canonical} />
+    {!noindex && <link rel="canonical" href={canonical} />}
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta name="author" content={site.author} />
+    <link rel="alternate" type="application/rss+xml" title={`${site.name} RSS`} href={new URL('/rss.xml', site.url).toString()} />
     <link rel="icon" href="/logo.ico" sizes="any" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={type} />
+    <meta property="og:locale" content="zh_CN" />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    {image && <meta property="og:image" content={new URL(image, site.url).toString()} />}
+    {imageUrl && <meta property="og:image" content={imageUrl} />}
+    {imageUrl && imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+    {type === 'article' && pubDate && <meta property="article:published_time" content={pubDate.toISOString()} />}
+    <meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+    {imageUrl && imageAlt && <meta name="twitter:image:alt" content={imageAlt} />}
+    {!noindex && <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/</g, '\\u003c')} />}
     <title>{pageTitle}</title>
   </head>
   <body>

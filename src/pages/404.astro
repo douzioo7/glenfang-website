@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="页面未找到" description="这个地址没有对应的页面，可以回到首页或翻阅全站归档。" noindex>
+  <main class="shell">
+    <section class="page-hero">
+      <p class="eyebrow">404 · PAGE NOT FOUND</p>
+      <h1>这一页，暂时找不到。</h1>
+      <p>链接可能已经变更，也可能是地址写错了。去其他地方看看吧。</p>
+    </section>
+    <nav class="recovery" aria-label="继续浏览">
+      <a href="/">← 回到首页</a>
+      <a href="/archive/">翻阅全部记录 →</a>
+    </nav>
+  </main>
+</BaseLayout>
+
+<style>
+  .recovery { display: flex; flex-wrap: wrap; gap: 20px 36px; padding: 42px 0 100px; }
+  .recovery a { color: var(--green); text-decoration: underline; text-underline-offset: 5px; }
+</style>

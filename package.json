@@ -2,6 +2,8 @@
   "name": "glenfang-website",
   "type": "module",
   "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -13,6 +15,8 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
     "astro": "^7.2.8",
     "typescript": "^6.0.3"
   },

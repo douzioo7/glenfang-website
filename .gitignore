@@ -7,6 +7,7 @@ dist/
 node_modules/
 
 # logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -15,7 +16,21 @@ pnpm-debug.log*
 
 # environment variables
 .env
-.env.production
+.env.*
+!.env.example
+
+# local Twikoo database and backups
+/deploy/twikoo/data/
+/deploy/twikoo/backups/
+
+# local credentials (never commit)
+/secrets/
+
+# editor and Windows temporary files
+*.swp
+*.swo
+*~
+Thumbs.db
 
 # macOS-specific files
 .DS_Store

@@ -14,8 +14,8 @@ export const site = {
       '这里不是追赶更新的地方，而是一册可以慢慢翻阅的记录：阅读时的停顿、厨房里的新发现，以及日常里不愿忘记的细节。',
   },
   contact: {
-    email: '',
-    github: '',
+    email: 'glenfangoo7@gmail.com',
+    github: 'https://github.com/douzioo7',
   },
 } as const;
 

@@ -10,6 +10,9 @@ import { site } from '../config/site';
   <div class="footer-bottom">
     <span>© {new Date().getFullYear()} {site.author}</span>
     <div class="links">
+      <a href="/archive/">全站归档</a>
+      <a href="/rss.xml">RSS 订阅</a>
+      <a href="/copyright/">版权与转载</a>
       {site.contact.github && <a href={site.contact.github} target="_blank" rel="noreferrer">GitHub <span class="external-mark">↗</span></a>}
       {site.contact.email && <a href={`mailto:${site.contact.email}`}>Email</a>}
       <a href="/about/">关于本站</a>
@@ -24,7 +27,7 @@ import { site } from '../config/site';
   .brand img { width: 32px; height: 32px; object-fit: contain; }
   .footer-main p { margin: 0; }
   .footer-bottom { margin-top: 36px; }
-  .links { display: flex; gap: 20px; }
+  .links { display: flex; flex-wrap: wrap; gap: 12px 20px; }
   .links a:hover { color: var(--ink); }
   @media (max-width: 600px) { .footer-main, .footer-bottom { align-items: flex-start; flex-direction: column; gap: 14px; } .footer-bottom { margin-top: 28px; } }
 </style>

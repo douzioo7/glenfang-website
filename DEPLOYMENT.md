@@ -26,6 +26,34 @@ npm run build
 
 ## 发布前检查
 
+### 静态路由与自定义 404
+
+构建会生成 `dist/404.html`。在实际提供主站静态文件的 Nginx `server`
+配置中合并以下规则（不是仅配置外层反向代理）：
+
+```nginx
+error_page 404 /404.html;
+
+location / {
+    try_files $uri $uri/ =404;
+}
+
+location = /404.html {
+    internal;
+}
+```
+
+不要把不存在的路径回退到 `/index.html` 或使用 `error_page 404 =200`，
+否则错误页可能返回 200。保留现有 root、缓存和代理相关配置，合并后先运行
+`nginx -t` 再重载。这个仓库的页面变更不会自动修改 VPS 的 Nginx 配置。
+
+发布后验证 `/archive/`、`/rss.xml`、`/robots.txt`、`/sitemap-index.xml`
+可访问；随机不存在的路径应显示自定义页面且 HTTP 状态为 404。
+检查 `/reading` 是否跳转至 `/reading/`，RSS 与 sitemap 返回 XML 内容，
+站点地图不包含草稿或 404。若 Cloudflare 缓存旧页面，请刷新相应 URL。
+
+### 本地检查命令
+
 ```sh
 npm run astro -- check
 npm run build

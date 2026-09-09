@@ -10,7 +10,7 @@ interface Props {
 const { title, description, pubDate, category, accent, cover, coverAlt, tags = [], previous, next } = Astro.props;
 ---
 
-<BaseLayout title={title} description={description} image={cover}>
+<BaseLayout title={title} description={description} image={cover} imageAlt={coverAlt} type="article" pubDate={pubDate}>
   <main class={`article-shell ${accent}`}>
     <article>
       <header class="article-header">

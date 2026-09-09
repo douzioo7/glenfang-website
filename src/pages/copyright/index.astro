@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { site } from '../../config/site';
+---
+
+<BaseLayout title="版权与转载" description="了解本站代码、原创文章、图片和身份标识的授权范围与转载方式。">
+  <main class="shell">
+    <section class="page-hero">
+      <p class="eyebrow">COPYRIGHT & REUSE</p>
+      <h1>版权与转载</h1>
+      <p>感谢你愿意分享这里的内容。使用之前，请先了解它们各自的授权范围。</p>
+    </section>
+    <div class="copyright-copy">
+      <section>
+        <h2>网站代码</h2>
+        <p>本站原创程序代码、样式、配置、脚本和技术文档采用 MIT 许可证，允许在保留版权与许可证声明的前提下复用、修改和商业使用。具体条款与范围见代码仓库中的 LICENSE 和 CONTENT_LICENSE.md。</p>
+      </section>
+      <section>
+        <h2>原创文章、图片与文案</h2>
+        <p>除另有声明外，本站原创文章、照片、插画、个人介绍与其他编辑性文案由{site.author}保留所有权利，不包含在 MIT 授权中。</p>
+        <p>法律允许的使用不受本说明限制。除此之外，转载、翻译、改编、分发或商业使用前，请先取得授权。标注作者和原文链接本身不等于获得授权。RSS 摘要供订阅读者阅读，不额外授予再分发许可。</p>
+      </section>
+      <section>
+        <h2>Logo 与站点身份</h2>
+        <p>Logo、网站图标、站点名称和其他身份标识不属于 MIT 授权范围。复用代码时，请替换这些素材及个人信息，不要暗示与本站存在关联或获得作者背书。</p>
+      </section>
+      <section>
+        <h2>第三方材料与评论</h2>
+        <p>引用内容、第三方素材及访客评论的权利属于各自权利人，本站声明不替代他们的授权。第三方材料按原有许可或合法使用依据处理。</p>
+      </section>
+      <section>
+        <h2>转载申请与权利反馈</h2>
+        <p>请附上文章或素材链接、计划使用的方式及发布平台，通过<a href="/about/#contact">关于页面的联系方式</a>联系我。</p>
+      </section>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .copyright-copy { max-width: 760px; padding: 42px 0 90px; }
+  section + section { margin-top: 36px; }
+  h2 { font-size: 1.4rem; font-weight: 500; }
+  .copyright-copy p { color: var(--muted); line-height: 1.95; }
+  .copyright-copy a { color: var(--green); text-decoration: underline; text-underline-offset: 4px; }
+</style>

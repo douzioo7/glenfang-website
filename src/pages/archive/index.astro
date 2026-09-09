@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { collections } from '../../config/site';
+import { getAllPublishedArticles } from '../../lib/articles';
+
+const posts = await getAllPublishedArticles();
+const years = [...new Set(posts.map((post) => post.data.pubDate.getUTCFullYear()))];
+---
+
+<BaseLayout title="全站归档" description="按时间翻阅全部读书笔记、菜谱学习与随笔。">
+  <main class="shell">
+    <section class="page-hero">
+      <p class="eyebrow">ALL THE LITTLE NOTES</p>
+      <h1>全站归档</h1>
+      <p>共 {posts.length} 篇记录，把读过、做过、想过的事，按时间慢慢翻阅。</p>
+      <a class="subscribe" href="/rss.xml">通过 RSS 订阅更新 ↗</a>
+    </section>
+    <div class="archive">
+      {years.length ? years.map((year) => (
+        <section class="year" aria-labelledby={`year-${year}`}>
+          <h2 id={`year-${year}`}>{year}</h2>
+          <ul>
+            {posts.filter((post) => post.data.pubDate.getUTCFullYear() === year).map((post) => (
+              <li>
+                <time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toISOString().slice(5, 10)}</time>
+                <a href={`/${post.collection}/${post.id}/`}>{post.data.title}</a>
+                <span class="category">{collections[post.collection].name}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )) : <p class="empty">第一篇记录正在路上，欢迎稍后再来。</p>}
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .subscribe { display: inline-block; margin-top: 18px; color: var(--green); text-decoration: underline; text-underline-offset: 4px; }
+  .archive { padding: 48px 0 96px; }
+  .year { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 30px; margin-bottom: 40px; }
+  h2 { margin: 10px 0; font-family: Georgia, serif; font-size: 2rem; font-weight: 400; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { display: grid; grid-template-columns: 60px minmax(0, 1fr) auto; gap: 20px; align-items: baseline; padding: 20px 0; border-bottom: 1px solid var(--line); }
+  time, .category, .empty { color: var(--muted); font-size: .85rem; }
+  li a { overflow-wrap: anywhere; }
+  li a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  @media (max-width: 600px) { .year { grid-template-columns: 1fr; gap: 4px; } li { grid-template-columns: 48px minmax(0, 1fr); gap: 8px 14px; } .category { grid-column: 2; } }
+</style>
