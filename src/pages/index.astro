@@ -23,9 +23,41 @@ const spaces = [
 </BaseLayout>
 
 <style>
+  .hero::before { content: ''; position: absolute; pointer-events: none; width: 560px; height: 560px; right: -50px; top: -30px; border-radius: 50%; background: radial-gradient(circle, rgba(164, 186, 138, .22), rgba(216, 196, 157, .09) 48%, transparent 70%); translate: var(--drift-x, 0px) var(--drift-y, 0px); transition: translate .7s ease-out; }
+  .bean-orbit { translate: var(--drift-x, 0px) var(--drift-y, 0px); transition: translate .7s ease-out; }
+  @media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) { .hero::before, .bean-orbit { translate: none; } }
   .hero { position: relative; display: flex; min-height: 590px; align-items: center; overflow: hidden; border-bottom: 1px solid var(--line); }.hero-copy { position: relative; z-index: 1; max-width: 650px; }.hero h1 { margin: 0; font-family: Georgia, "Noto Serif SC", serif; font-size: clamp(4.3rem, 10vw, 8.2rem); font-weight: 400; letter-spacing: -.08em; line-height: .91; }.hero h1 em { color: #746655; font-style: normal; }.hero-copy > p:not(.eyebrow) { max-width: 450px; margin: 32px 0 20px; color: var(--muted); font-size: 1.08rem; }.text-link { display: inline-block; color: var(--ink); font-size: .9rem; font-weight: 700; }.text-link span { display: inline-block; margin-left: 5px; transition: transform .2s ease; }.text-link:hover span { transform: translateX(4px); }
   .bean-orbit { position: absolute; right: 6%; top: 83px; width: 375px; height: 375px; border: 1px solid rgba(99, 125, 81, .25); border-radius: 50%; }.bean-orbit::after { position: absolute; inset: 58px; border: 1px dashed rgba(169, 104, 57, .28); border-radius: 50%; content: ""; }.bean-orbit i { position: absolute; z-index: 1; left: 102px; top: 102px; width: 180px; height: 148px; border-radius: 55% 45% 54% 46% / 55% 49% 51% 45%; background: linear-gradient(140deg, #a9bf91, #637d51); transform: rotate(-28deg); box-shadow: inset -18px -18px 30px rgba(38, 57, 29, .15); }.bean-orbit b, .bean-orbit span { position: absolute; z-index: 2; color: #bd7c4b; font-size: 1.1rem; }.bean-orbit b { top: 30px; left: 124px; }.bean-orbit span { right: 35px; bottom: 77px; color: #79658b; }
   .spaces, .latest { padding: 96px 0; }.heading { display: flex; align-items: end; justify-content: space-between; gap: 40px; margin-bottom: 35px; }.heading > p { max-width: 350px; margin: 0; color: var(--muted); font-size: .9rem; text-align: right; }.space-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }.space { position: relative; min-height: 275px; padding: 25px; overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--card); transition: transform .25s ease, box-shadow .25s ease; }.space:hover { transform: translateY(-4px); box-shadow: 0 13px 28px rgba(55, 48, 39, .08); }.number, .space > div > p { color: var(--green); font-size: .73rem; font-weight: 700; letter-spacing: .13em; }.symbol { position: absolute; top: 17px; right: 25px; color: var(--green); font-size: 4rem; opacity: .14; }.space > div { position: absolute; right: 25px; bottom: 25px; left: 25px; }.space h3 { margin: 3px 0 8px; font-family: Georgia, "Noto Serif SC", serif; font-size: 1.75rem; font-weight: 400; }.space > div > span { display: block; max-width: 440px; color: var(--muted); font-size: .88rem; }.space strong { display: block; margin-top: 19px; font-size: .83rem; }.cooking .number, .cooking > div > p, .cooking .symbol { color: var(--orange); }.notes .number, .notes > div > p, .notes .symbol { color: var(--violet); }.tools .number, .tools > div > p, .tools .symbol { color: var(--blue); }
   .latest { padding-top: 0; }.latest-list { border-top: 1px solid var(--line); }.muted { color: var(--muted); }.tool-prompt { display: grid; grid-template-columns: .85fr 1.15fr; gap: 60px; margin-bottom: 100px; padding: 44px; border: 1px solid #d8d2c6; border-radius: 20px; background: rgba(223, 213, 193, .36); }.tool-prompt h2 { margin: 0; }.tool-prompt p:not(.eyebrow) { color: var(--muted); font-size: .9rem; }.tool-links { display: grid; align-content: center; }.tool-links a { display: grid; grid-template-columns: 35px 1fr 20px; gap: 8px; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(105, 101, 93, .22); font-size: .93rem; }.tool-links a:first-child { border-top: 1px solid rgba(105, 101, 93, .22); }.tool-links a span { color: var(--blue); font-size: 1.2rem; }.tool-links small { text-align: right; }
   @media (max-width: 760px) { .hero { min-height: 510px; }.bean-orbit { right: -125px; top: 140px; transform: scale(.75); transform-origin: center; }.heading { display: block; }.heading > p { margin-top: 16px; text-align: left; }.space-grid { grid-template-columns: 1fr; }.spaces, .latest { padding: 65px 0; }.latest { padding-top: 0; }.tool-prompt { grid-template-columns: 1fr; gap: 22px; margin-bottom: 65px; padding: 28px; } }
 </style>
+
+<script>
+  const hero = document.querySelector<HTMLElement>('.hero');
+  const motion = window.matchMedia('(prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine)');
+  if (hero) {
+    let frame = 0;
+    const reset = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      hero.style.removeProperty('--drift-x');
+      hero.style.removeProperty('--drift-y');
+    };
+    hero.addEventListener('pointermove', (event) => {
+      if (!motion.matches || document.hidden || event.pointerType !== 'mouse') return;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const rect = hero.getBoundingClientRect();
+        hero.style.setProperty('--drift-x', `${((event.clientX - rect.left) / rect.width - .5) * 24}px`);
+        hero.style.setProperty('--drift-y', `${((event.clientY - rect.top) / rect.height - .5) * 18}px`);
+        frame = 0;
+      });
+    }, { passive: true });
+    hero.addEventListener('pointerleave', reset);
+    motion.addEventListener('change', reset);
+    document.addEventListener('visibilitychange', reset);
+    window.addEventListener('pagehide', reset);
+    new IntersectionObserver(([entry]) => { if (!entry.isIntersecting) reset(); }).observe(hero);
+  }
+</script>

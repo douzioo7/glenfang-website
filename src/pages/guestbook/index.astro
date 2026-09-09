@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TwikooComments from '../../components/TwikooComments.astro';
+import { site } from '../../config/site';
+---
+
+<BaseLayout title="留言板" description="路过的话，留下一句话吧。聊聊近况，分享发现，或者只是打个招呼。">
+  <main class="shell guestbook">
+    <section class="page-hero">
+      <p class="eyebrow">A NOTE FROM YOU</p>
+      <h1>留言板</h1>
+      <p>路过的话，留下一句话吧。聊聊近况，分享发现，或者只是打个招呼。</p>
+    </section>
+    <div class="guestbook-body">
+      <aside class="welcome-note">
+        <span class="note-mark" aria-hidden="true">✎</span>
+        <p class="eyebrow">很高兴在这里遇见你</p>
+        <h2>留一点字，<br />就像来过一样。</h2>
+        <p>一本喜欢的书，一道刚学会的菜，或是今天遇到的小事，都可以留在这里。</p>
+        <p class="signature">—— 豆子</p>
+      </aside>
+      <section class="message-paper" aria-label="访客留言">
+        <p class="guestbook-hint">这里的留言会公开展示，请不要留下私人联系方式或其他敏感信息。</p>
+        {site.comments.enabled ? <TwikooComments path="/guestbook/" title="写张小纸条" /> : <p>留言板暂时休息中，欢迎过些时候再来。</p>}
+        {site.contact.email && <p class="private-note">想私下聊聊？<a href={`mailto:${site.contact.email}`}>给我写封邮件 ↗</a></p>}
+      </section>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .guestbook-body { display: grid; grid-template-columns: 260px minmax(0, 1fr); align-items: start; gap: 48px; padding: 60px 0 90px; }
+  .welcome-note { position: relative; padding: 34px 24px 22px; background: #eee7d4; border: 1px solid #e1d7bd; border-radius: 3px 3px 24px 3px; transform: rotate(-2deg); box-shadow: 3px 9px 22px #5143230a; }
+  .welcome-note::before { content: ''; position: absolute; width: 74px; height: 22px; top: -11px; left: calc(50% - 37px); background: #c5cbb798; transform: rotate(5deg); }
+  .note-mark { display: block; color: var(--green); font-size: 2rem; margin-bottom: 12px; }
+  .welcome-note h2 { font-family: Georgia, 'Noto Serif SC', serif; font-size: 1.6rem; font-weight: 400; line-height: 1.5; }
+  .welcome-note p:not(.eyebrow) { color: var(--muted); font-size: .9rem; }
+  .signature { text-align: right; }
+  .message-paper { min-width: 0; padding: 30px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: 0 12px 38px #51432305; }
+  .guestbook-hint, .private-note { color: var(--muted); font-size: .85rem; }
+  .guestbook-hint { margin-top: 0; }
+  .private-note { margin: 28px 0 0; }
+  .private-note a { text-decoration: underline; text-underline-offset: 4px; }
+  .message-paper :global(.comments) { margin-top: 24px; padding-top: 24px; }
+  @media (max-width: 760px) { .guestbook-body { grid-template-columns: 1fr; gap: 32px; padding: 36px 0 60px; } .welcome-note { transform: none; } .welcome-note h2 br { display: none; } .message-paper { padding: 22px 16px; } }
+</style>

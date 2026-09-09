@@ -59,7 +59,7 @@ const structuredData = {
     {!noindex && <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/</g, '\\u003c')} />}
     <title>{pageTitle}</title>
   </head>
-  <body>
+  <body data-space={Astro.url.pathname.split('/')[1] || 'home'}>
     <SiteHeader currentPath={Astro.url.pathname} />
     <slot />
     <SiteFooter />

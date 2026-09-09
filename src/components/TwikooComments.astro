@@ -2,25 +2,32 @@
 import { site } from '../config/site';
 
 const endpoint = import.meta.env.PUBLIC_TWIKOO_ENV_ID?.trim() || site.comments.endpoint;
-const commentPath = Astro.url.pathname;
+interface Props { path?: string; title?: string; }
+const { path: commentPath = Astro.url.pathname, title = '留下一句话' } = Astro.props;
 ---
 
 {site.comments.enabled && endpoint && (
   <section class="comments" aria-label="评论区">
     <p class="eyebrow">CONVERSATION</p>
-    <h2>留下一句话</h2>
+    <h2>{title}</h2>
     <p id="comment-status" class="comment-status" role="status">正在加载评论…</p>
+    <div id="comment-recovery" hidden>
+      <button type="button" onclick="window.location.reload()">重新加载</button>
+      {site.contact.email && <a href={`mailto:${site.contact.email}`}>也可以写邮件给我 ↗</a>}
+    </div>
     <noscript>请启用 JavaScript 后查看或发表评论。</noscript>
     <div id="twikoo" data-endpoint={endpoint} data-path={commentPath}></div>
     <script is:inline>
       (() => {
         const mount = document.querySelector('#twikoo');
         const status = document.querySelector('#comment-status');
+        const recovery = document.querySelector('#comment-recovery');
         if (!mount || !status) return;
 
         const showError = () => {
           status.hidden = false;
           status.textContent = '评论暂时无法加载，请稍后刷新页面重试。';
+          if (recovery) recovery.hidden = false;
         };
         const timeout = window.setTimeout(showError, 15000);
         const script = document.createElement('script');
@@ -35,6 +42,7 @@ const commentPath = Astro.url.pathname;
               lang: 'zh-CN',
             });
             status.hidden = true;
+            if (recovery) recovery.hidden = true;
           } catch {
             showError();
           } finally {
@@ -53,6 +61,9 @@ const commentPath = Astro.url.pathname;
 
 <style>
   .comment-status { color: var(--muted); font-size: 1rem; }
+  #comment-recovery { margin-bottom: 20px; }
+  #comment-recovery button { margin-right: 16px; padding: 7px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); cursor: pointer; }
+  #comment-recovery a { text-decoration: underline; font-size: .9rem; }
   .comments :global(.twikoo) { color: var(--ink); }
   .comments { margin-top: 76px; padding-top: 42px; border-top: 1px solid var(--line); }.comments h2 { margin: 0 0 26px; font-family: Georgia, "Noto Serif SC", serif; font-size: 1.8rem; font-weight: 400; }
 </style>
