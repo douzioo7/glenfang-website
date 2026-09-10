@@ -1,0 +1,185 @@
+<aside class="douzi-companion" aria-label="豆子小伙伴">
+  <p class="douzi-message" role="status" hidden></p>
+  <button class="douzi-pet" type="button" aria-label="和豆子打招呼；拖动可移动，方向键微调位置" title="点击打招呼 · 拖动换位置">
+    <span class="douzi-body">
+      <img src="/images/douzi-mascot-v2.png" width="1024" height="1024" alt="穿着绿披肩、抱着书的豆子精灵" draggable="false" />
+      <span class="douzi-eyes" aria-hidden="true"><i class="eye"><b></b></i><i class="eye"><b></b></i></span>
+    </span>
+    <svg class="douzi-leaves" viewBox="690 0 410 340" aria-hidden="true">
+      <defs><clipPath id="douzi-leaf-clip"><path d="M711 17 C734 7 826 58 860 103 C890 151 884 195 865 217 C926 148 1015 152 1062 229 C1079 257 1085 292 1075 326 C1037 303 1009 309 970 304 C919 302 875 274 855 274 L813 313 L789 269 C747 220 718 170 719 103 C720 76 712 49 707 34 Z" /></clipPath></defs>
+      <image href="/images/douzi-mascot-v2.png" width="1254" height="1254" preserveAspectRatio="none" clip-path="url(#douzi-leaf-clip)" />
+    </svg>
+  </button>
+</aside>
+<style>
+.douzi-companion { --pet-size:166px; position:fixed; right:22px; bottom:96px; z-index:30; width:var(--pet-size); height:var(--pet-size); }
+.douzi-leaves { display:none; width:100%; height:100%; filter:drop-shadow(0 2px 3px #74634218); }
+.douzi-companion.is-docked { width:58px; height:52px; }
+.is-docked .douzi-body { display:none; }
+.is-docked .douzi-leaves { display:block; transform:scaleX(var(--leaf-mirror, 1)) rotate(var(--leaf-angle, 0deg)); transform-origin:center; }
+.is-docked[data-dock-edge="right"] { --leaf-angle:90deg; --leaf-mirror:-1; }
+.is-docked[data-dock-edge="top"] { --leaf-angle:180deg; }
+.is-docked .douzi-pet { cursor:pointer; }
+.is-docked .douzi-pet:hover .douzi-leaves { transform:scaleX(var(--leaf-mirror, 1)) rotate(calc(var(--leaf-angle, 0deg) - 5deg)); }
+.douzi-pet { display:block; width:100%; height:100%; padding:0; border:0; background:none; cursor:grab; border-radius:35%; touch-action:none; user-select:none; -webkit-user-select:none; }
+.douzi-pet:active { cursor:grabbing; }
+.douzi-body { position:relative; display:block; width:100%; height:100%; transform:perspective(500px) rotateY(var(--turn, 0deg)) rotate(var(--lean, 0deg)) translateY(var(--lift, 0px)); transition:transform .22s ease-out; transform-origin:50% 85%; }
+.douzi-body img { width:100%; height:100%; object-fit:contain; pointer-events:none; mask: url('/images/douzi-mascot-mask.svg') center / contain no-repeat; }
+.douzi-eyes { position:absolute; left:37%; top:42%; width:25%; height:6%; display:flex; justify-content:space-between; align-items:center; pointer-events:none; }
+.eye { position:relative; display:block; width:25%; height:100%; background:#fff7df; border-radius:50%; overflow:hidden; box-shadow:0 -1px 0 #6d422e; transform:scaleY(1); transition:transform .09s ease; }
+.eye b { position:absolute; width:73%; height:92%; left:14%; top:5%; background:radial-gradient(circle at 35% 26%, #fffce8 0 13%, transparent 16%), linear-gradient(#4b2c20, #895735); border-radius:50%; transform:translate(var(--eye-x, 0px), var(--eye-y, 0px)); transition:transform .13s ease-out; }
+.douzi-companion.blink .eye { transform:scaleY(.09); background:#65412e; }
+.douzi-companion.blink .eye b { opacity:0; }
+.douzi-message { position:absolute; left:0; bottom:calc(100% + 6px); width:max-content; max-width:min(210px, calc(100vw - 24px)); margin:0; padding:10px 15px; border:1px solid #b6a47c66; border-radius:14px 14px 3px 14px; color:#746655; background:#fffdf5f5; box-shadow:0 7px 24px #7463420d; font-size:.8rem; line-height:1.6; pointer-events:none; }
+.douzi-companion.near-top .douzi-message { bottom:auto; top:calc(100% + 6px); }
+.douzi-companion.near-right .douzi-message { left:auto; right:0; }
+@media (max-width:760px) { .douzi-companion { --pet-size:126px; right:10px; bottom:76px; } }
+@media (prefers-reduced-motion:reduce) { .douzi-body,.eye,.eye b { transition:none; } .douzi-body { transform:none; } }
+</style>
+<script>
+const companion = document.querySelector<HTMLElement>('.douzi-companion');
+const pet = document.querySelector<HTMLButtonElement>('.douzi-pet');
+const message = document.querySelector<HTMLParagraphElement>('.douzi-message');
+if (companion && pet && message) {
+  const host=companion, button=pet, bubble=message;
+  const motion=matchMedia('(prefers-reduced-motion: no-preference)');
+  const greetings = [
+    '你好呀，我是豆子。',
+    '把我拖到边缘，我就藏进叶子里啦。',
+    '读几页书，慢慢来。',
+    '今天也要好好吃饭呀。',
+    '把小小的灵感，收进口袋。',
+    '不积跬步，无以至千里。——《荀子·劝学》',
+    '知之为知之，不知为不知，是知也。——《论语》',
+    '千里之行，始于足下。——《老子》',
+    '学而不思则罔，思而不学则殆。——《论语》',
+    '纸上得来终觉浅，绝知此事要躬行。——陆游',
+    '欲穷千里目，更上一层楼。——王之涣',
+    '小葱拌豆腐——一清二白。',
+    '竹篮打水——一场空。',
+    '八仙过海——各显神通。',
+    '芝麻开花——节节高。',
+    '铁杵磨成针——功到自然成。',
+    '十五个吊桶打水——七上八下。',
+    '小知识：月亮本身不发光，我们看到的是它反射的太阳光。',
+    '小知识：声音传播需要介质，真空中不能传声。',
+    '小知识：一光年是距离单位，不是时间单位。',
+    '小知识：冰的密度比液态水小，所以冰块能浮在水面上。',
+    '小知识：地球自转带来昼夜交替。',
+    '小知识：鲸和海豚都是哺乳动物，用肺呼吸。',
+    '小知识：植物光合作用会利用光能，把二氧化碳和水转化为有机物。',
+    '小知识：彩虹的形成与阳光在水滴中的折射和反射有关。',
+    '认真生活，也别忘了给自己留一点空白。',
+    '今天的一小步，也值得记下来。',
+    '一道菜，多试一次，就多懂一点。',
+    '好奇心，是随身携带的小灯。',
+    '暂时没有答案，也可以先把问题收藏起来。'
+  ];
+  let remaining: number[] = [];
+  function nextGreeting() {
+    if (turn++ === 0) return greetings[0];
+    if (!remaining.length) {
+      remaining = Array.from({length:greetings.length-1},(_,i)=>i+1);
+      for(let i=remaining.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [remaining[i],remaining[j]]=[remaining[j],remaining[i]]; }
+      if(greetings[remaining[remaining.length-1]]===bubble.textContent) [remaining[0],remaining[remaining.length-1]]=[remaining[remaining.length-1],remaining[0]];
+    }
+    return greetings[remaining.pop()!];
+  }
+  let turn=0, frame=0, suppressClick=false;
+  let timeout:ReturnType<typeof setTimeout>, blinkTimer:ReturnType<typeof setTimeout>;
+  let drag:{id:number;x:number;y:number;left:number;top:number;moved:boolean}|undefined;
+  const key='douzi-position-v2';
+  type Edge = 'left' | 'right' | 'top' | 'bottom';
+  let docked: Edge | null = null;
+  let expanded = {x:0,y:0};
+  const fullSize = () => parseFloat(getComputedStyle(host).getPropertyValue('--pet-size')) || 166;
+  const clamp = (value:number,max:number) => Math.max(8,Math.min(value,Math.max(8,max-8)));
+  function place(x:number,y:number) {
+    Object.assign(host.style,{left:x+'px',top:y+'px',right:'auto',bottom:'auto'});
+    host.classList.toggle('near-top',y<90); host.classList.toggle('near-right',x>document.documentElement.clientWidth-240);
+  }
+  function position(x:number,y:number) {
+    expanded={x:clamp(x,document.documentElement.clientWidth-fullSize()),y:clamp(y,document.documentElement.clientHeight-fullSize())};
+    place(expanded.x,expanded.y);
+  }
+  function showDock(edge:Edge) {
+    neutral(); clearTimeout(timeout); clearTimeout(blinkTimer); bubble.hidden=true;
+    docked=edge; host.dataset.dockEdge=edge; host.classList.remove('blink'); host.classList.add('is-docked');
+    button.setAttribute('aria-label','展开豆子小伙伴'); button.title='点击叶子，叫豆子回来';
+    const x=clamp(expanded.x+(fullSize()-58)/2,document.documentElement.clientWidth-58);
+    const y=clamp(expanded.y+(fullSize()-52)/2,document.documentElement.clientHeight-52);
+    place(edge==='left'?4:edge==='right'?Math.max(4,document.documentElement.clientWidth-62):x,edge==='top'?4:edge==='bottom'?Math.max(4,document.documentElement.clientHeight-56):y);
+  }
+  function unfold() {
+    const edge=docked; docked=null; delete host.dataset.dockEdge; host.classList.remove('is-docked');
+    button.setAttribute('aria-label','和豆子打招呼；拖动可移动，方向键微调位置'); button.title='点击打招呼 · 拖动换位置';
+    position(edge==='left'?32:edge==='right'?document.documentElement.clientWidth-fullSize()-32:expanded.x,edge==='top'?32:edge==='bottom'?document.documentElement.clientHeight-fullSize()-32:expanded.y);
+    save(); blink();
+  }
+  function dockIfNear() {
+    const distances: [Edge,number][]=[['left',expanded.x],['right',document.documentElement.clientWidth-fullSize()-expanded.x],['top',expanded.y],['bottom',document.documentElement.clientHeight-fullSize()-expanded.y]];
+    distances.sort((a,b)=>a[1]-b[1]);
+    if(distances[0][1]<=20) showDock(distances[0][0]);
+  }
+  function save() {
+    try { localStorage.setItem(key,JSON.stringify({x:expanded.x/Math.max(1,document.documentElement.clientWidth-fullSize()),y:expanded.y/Math.max(1,document.documentElement.clientHeight-fullSize()),edge:docked})); } catch { /* Storage is optional. */ }
+  }
+  function restore() {
+    try { const s=JSON.parse(localStorage.getItem(key)||'null');
+      if(s && Number.isFinite(s.x) && Number.isFinite(s.y)) {
+        position(s.x*(document.documentElement.clientWidth-fullSize()),s.y*(document.documentElement.clientHeight-fullSize()));
+        if(['left','right','top','bottom'].includes(s.edge))showDock(s.edge); return;
+      }
+    } catch { /* Ignore stale preferences. */ }
+    if(docked) { position(expanded.x,expanded.y); showDock(docked); }
+    else {const r=host.getBoundingClientRect();position(r.left,r.top);}
+  }
+  function neutral() { cancelAnimationFrame(frame); frame=0; for(const n of ['--eye-x','--eye-y','--turn','--lean','--lift']) host.style.removeProperty(n); }
+  function blink() { if(docked||!motion.matches||document.hidden)return; clearTimeout(blinkTimer);host.classList.add('blink');blinkTimer=setTimeout(()=>host.classList.remove('blink'),170); }
+  button.addEventListener('pointerdown',e=> {
+    if(e.button!==0)return; suppressClick=false; if(docked)return; const r=host.getBoundingClientRect();
+    drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:r.left,top:r.top,moved:false}; button.setPointerCapture(e.pointerId); neutral();
+  });
+  button.addEventListener('pointermove',e=> {
+    if(!drag||e.pointerId!==drag.id)return; const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+    if(Math.hypot(dx,dy)>5)drag.moved=true;
+    if(drag.moved){bubble.hidden=true;position(drag.left+dx,drag.top+dy);}
+  });
+  function endDrag(e:PointerEvent) {
+    if(!drag||e.pointerId!==drag.id)return; const moved=drag.moved; suppressClick=moved||e.type==='pointercancel';drag=undefined; if(moved)dockIfNear();
+    if(button.hasPointerCapture(e.pointerId))button.releasePointerCapture(e.pointerId);save();
+  }
+  button.addEventListener('pointerup',endDrag);button.addEventListener('pointercancel',endDrag);
+  button.addEventListener('lostpointercapture',()=>{if(drag){const moved=drag.moved;suppressClick=true;drag=undefined;if(moved)dockIfNear();save();}});
+  button.addEventListener('click',e=> {
+    if(suppressClick&&e.detail!==0){suppressClick=false;return;}
+    if(docked){unfold();return;}
+    blink();clearTimeout(timeout);bubble.textContent=nextGreeting();bubble.hidden=false;
+    timeout=setTimeout(()=>{bubble.hidden=true;},Math.max(4200,Math.min(9000,(bubble.textContent?.length||0)*180)));
+  });
+  document.addEventListener('pointermove',e=> {
+    if(docked||drag||!motion.matches||document.hidden||e.pointerType!=='mouse')return;
+    cancelAnimationFrame(frame);frame=requestAnimationFrame(()=> {
+      frame=0;const r=host.getBoundingClientRect();
+      const x=Math.max(-1,Math.min(1,(e.clientX-r.left-r.width/2)/280));
+      const y=Math.max(-1,Math.min(1,(e.clientY-r.top-r.height*.4)/250));
+      host.style.setProperty('--eye-x',`${x*1.6}px`);host.style.setProperty('--eye-y',`${y*1.2}px`);
+      host.style.setProperty('--turn',`${x*8}deg`);host.style.setProperty('--lean',`${x*3}deg`);host.style.setProperty('--lift',`${-Math.abs(x)*2}px`);
+    });
+  },{passive:true});
+  document.addEventListener('click',e=>{if(!host.contains(e.target as Node))blink();});
+  button.addEventListener('keydown',e=> {
+    if(e.key==='Escape'){clearTimeout(timeout);bubble.hidden=true;}
+    const d:Record<string,[number,number]>={ArrowLeft:[-10,0],ArrowRight:[10,0],ArrowUp:[0,-10],ArrowDown:[0,10]};
+    if(!docked&&d[e.key]){e.preventDefault();const r=host.getBoundingClientRect();const [x,y]=d[e.key];position(r.left+x,r.top+y);dockIfNear();save();}
+  });
+  window.addEventListener('resize',restore,{passive:true});window.addEventListener('blur',neutral);
+  document.documentElement.addEventListener('pointerleave',neutral);document.addEventListener('visibilitychange',neutral);
+  motion.addEventListener('change',()=>{neutral();clearTimeout(blinkTimer);host.classList.remove('blink');});
+  window.addEventListener('pagehide',()=>{neutral();clearTimeout(timeout);clearTimeout(blinkTimer);});
+  restore();
+}
+</script>
+
+
+

@@ -1,0 +1,153 @@
+<canvas id="home-pointer-art" aria-hidden="true"></canvas>
+
+<style is:global>
+  body[data-space="home"] {
+    background:
+      url('/images/paper-grain.svg'),
+      radial-gradient(ellipse at 98% 9%, #b8bf9b33, transparent 32%),
+      radial-gradient(ellipse at 0% 39%, #aebc9638, transparent 30%),
+      radial-gradient(ellipse at 100% 63%, #ceb88e38, transparent 32%),
+      radial-gradient(ellipse at 12% 89%, #a5b29a30, transparent 27%),
+      linear-gradient(180deg, #f7f3eb, #f4efe3 38%, #f8f4ec 65%, #ede8da);
+  }
+  body[data-space="home"] .hero {
+    border-bottom-color: #b6a47c36;
+    box-shadow: 0 22px 48px -36px #87765540;
+  }
+  body[data-space="home"] .space {
+    background: linear-gradient(140deg, #fffdf6cf, #fffdf66b);
+    border-color: #b8aa893d;
+    box-shadow: inset 0 1px 0 #ffffffa6, 0 8px 28px #75664805;
+  }
+  body[data-space="home"] .space:hover {
+    border-color: #b29c6c80;
+    box-shadow: inset 0 1px 0 #ffffffb3, 0 16px 35px #75664812;
+  }
+  body[data-space="home"] .tool-prompt {
+    background: linear-gradient(120deg, #dedbc980, #f6efe1a6);
+    border-color: #b6a47c52;
+  }
+  body[data-space="home"] .site-footer { border-top-color: #b6a47c52; }
+  #home-pointer-art { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+  @media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+    #home-pointer-art { display: none; }
+  }
+</style>
+
+<script>
+  const canvas = document.querySelector<HTMLCanvasElement>('#home-pointer-art');
+  const ctx = canvas?.getContext('2d');
+  if (canvas && ctx) {
+    const surface = canvas;
+    const ink = ctx;
+    const motion = matchMedia('(prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine)');
+    type Point = { x: number; y: number; born: number };
+    type Petal = Point & { angle: number; kind: number; trail?: boolean };
+    let petals: Petal[] = [];
+    let frame = 0;
+    let lastMove = 0;
+    let lastClick = 0;
+    let sequence = 0;
+    let lastPoint: Point | undefined;
+    let width = innerWidth;
+    let height = innerHeight;
+    function clear() {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      lastPoint = undefined;
+      petals = [];
+      ink.clearRect(0, 0, width, height);
+    }
+    function resize() {
+      clear();
+      width = innerWidth;
+      height = innerHeight;
+      const scale = Math.min(devicePixelRatio || 1, 2);
+      surface.width = Math.round(width * scale);
+      surface.height = Math.round(height * scale);
+      ink.setTransform(scale, 0, 0, scale, 0, 0);
+    }
+    function draw(now: number) {
+      frame = 0;
+      ink.clearRect(0, 0, width, height);
+      petals = petals.filter(p => now - p.born < (p.trail ? 680 : 950));
+      ink.lineCap = 'round';
+      for (const p of petals) {
+        const age = (now - p.born) / (p.trail ? 680 : 950);
+        const travel = (p.trail ? 13 : 34) * (1 - Math.pow(1 - age, 3));
+        ink.save();
+        ink.translate(p.x + Math.cos(p.angle) * travel, p.y + Math.sin(p.angle) * travel + age * (p.trail ? 14 : -16));
+        ink.rotate(p.trail ? p.angle + age * .9 : Math.sin(p.angle) * .25 + age * .2);
+        const size = (p.trail ? .7 : 1.05) * (1 - age * .25);
+        ink.scale(size, size);
+        ink.globalAlpha = (p.trail ? .42 : .72) * Math.pow(1 - age, 1.3);
+        ink.strokeStyle = ['#a58a53', '#87916a', '#b28d86', '#a58a53', '#8e9776', '#a58a53'][p.kind];
+        ink.fillStyle = ink.strokeStyle;
+        ink.lineWidth = .9;
+        ink.beginPath();
+        switch (p.kind) {
+          case 1: // Leaf.
+            ink.moveTo(0, -6); ink.bezierCurveTo(7, -2, 4, 4, 0, 6);
+            ink.bezierCurveTo(-5, 2, -4, -3, 0, -6);
+            if (p.trail) ink.fill();
+            ink.moveTo(0, 5); ink.lineTo(0, -3); break;
+          case 2: // Petal.
+            ink.moveTo(0, 6); ink.bezierCurveTo(-9, -1, -4, -8, 0, -4);
+            ink.bezierCurveTo(5, -8, 8, 0, 0, 6);
+            if (p.trail) ink.fill(); break;
+          case 3: // Open book.
+            ink.moveTo(0, -4); ink.quadraticCurveTo(-3, -7, -7, -5);
+            ink.lineTo(-7, 5); ink.quadraticCurveTo(-3, 3, 0, 6);
+            ink.quadraticCurveTo(3, 3, 7, 5); ink.lineTo(7, -5);
+            ink.quadraticCurveTo(3, -7, 0, -4); ink.lineTo(0, 6); break;
+          case 4: // Sprout.
+            ink.moveTo(0, 6); ink.quadraticCurveTo(1, 0, -2, -3);
+            ink.bezierCurveTo(-9, -7, -7, 2, 0, 1);
+            ink.bezierCurveTo(7, 0, 7, -7, 0, -3); break;
+          case 5: // Tea cup.
+            ink.moveTo(-5, -2); ink.lineTo(-4, 4); ink.quadraticCurveTo(0, 7, 4, 4);
+            ink.lineTo(5, -2); ink.closePath(); ink.moveTo(5, -1);
+            ink.bezierCurveTo(10, -2, 10, 4, 4, 3);
+            ink.moveTo(-6, 7); ink.lineTo(6, 7);
+            ink.moveTo(0, -4); ink.quadraticCurveTo(-2, -6, 0, -8); break;
+          default:
+            ink.moveTo(0, -5); ink.quadraticCurveTo(1, -1, 4, 0);
+            ink.quadraticCurveTo(1, 1, 0, 5); ink.quadraticCurveTo(-1, 1, -4, 0);
+            ink.quadraticCurveTo(-1, -1, 0, -5);
+        }
+        ink.stroke(); ink.restore();
+      }
+      if (petals.length) frame = requestAnimationFrame(draw);
+    }
+    function start() { if (!frame) frame = requestAnimationFrame(draw); }
+    document.addEventListener('pointermove', event => {
+      if (!motion.matches || document.hidden || event.pointerType !== 'mouse' || event.buttons) return;
+      const now = performance.now();
+      if (now - lastMove < 65) return;
+      if (lastPoint && Math.hypot(event.clientX - lastPoint.x, event.clientY - lastPoint.y) < 14) return;
+      lastMove = now;
+      lastPoint = { x: event.clientX, y: event.clientY, born: now };
+      petals.push({ ...lastPoint, angle: sequence++ * 2.4, kind: sequence % 2 + 1, trail: true });
+      petals = petals.slice(-36);
+      start();
+    }, { passive: true });
+    document.addEventListener('pointerdown', event => {
+      if (!motion.matches || document.hidden || event.pointerType !== 'mouse' || event.button !== 0) return;
+      if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable]')) return;
+      const now = performance.now();
+      if (now - lastClick < 180) return;
+      lastClick = now;
+      for (let i = 0; i < 4; i++) petals.push({ x: event.clientX, y: event.clientY, born: now, angle: -Math.PI / 2 + i * Math.PI / 2, kind: sequence++ % 6 });
+      petals = petals.slice(-36);
+      start();
+    }, { passive: true });
+    window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('scroll', clear, { passive: true });
+    window.addEventListener('blur', clear);
+    window.addEventListener('pagehide', clear);
+    document.documentElement.addEventListener('pointerleave', clear);
+    document.addEventListener('visibilitychange', clear);
+    motion.addEventListener('change', clear);
+    resize();
+  }
+</script>
