@@ -19,14 +19,16 @@ html { scroll-behavior: smooth; }
 body {
   --wash: 139, 163, 119;
   min-width: 320px;
+  min-height: 100vh;
   margin: 0;
   line-height: 1.7;
   background:
     url('/images/paper-grain.svg'),
-    radial-gradient(ellipse at 100% 0, rgba(var(--wash), .22), transparent 36rem),
-    radial-gradient(ellipse at 0 650px, rgba(var(--wash), .13), transparent 26rem),
-    radial-gradient(ellipse at 100% 95%, rgba(207, 183, 144, .16), transparent 30rem),
-    var(--paper);
+    radial-gradient(ellipse at 98% 9%, rgba(var(--wash), .20), transparent 32%),
+    radial-gradient(ellipse at 0% 39%, rgba(var(--wash), .22), transparent 30%),
+    radial-gradient(ellipse at 100% 63%, #ceb88e38, transparent 32%),
+    radial-gradient(ellipse at 12% 89%, rgba(var(--wash), .19), transparent 27%),
+    linear-gradient(180deg, #f7f3eb, #f4efe3 38%, #f8f4ec 65%, #ede8da);
 }
 body[data-space="cooking"] { --wash: 195, 143, 94; }
 body[data-space="notes"] { --wash: 154, 136, 172; }

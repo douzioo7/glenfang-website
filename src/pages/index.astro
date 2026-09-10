@@ -1,7 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import HomeAtmosphere from '../components/HomeAtmosphere.astro';
-import DouziMascot from '../components/DouziMascot.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import { collections, site, tools } from '../config/site';
 import { getAllPublishedArticles } from '../lib/articles';
@@ -16,8 +14,6 @@ const spaces = [
 ---
 
 <BaseLayout>
-  <HomeAtmosphere />
-  <DouziMascot />
   <main>
     <section class="hero shell"><div class="hero-copy"><p class="eyebrow">A LITTLE SPACE FOR EVERYDAY LIFE</p><h1>豆子的<br /><em>空间小站</em></h1><p>{site.intro}</p><a class="text-link" href="/about/">认识一下豆子 <span>→</span></a></div></section>
     <section class="spaces shell"><div class="heading"><div><p class="eyebrow">EXPLORE</p><h2 class="section-title">我的四个小空间</h2></div><p>读书、下厨、记录，也做一些让生活轻松一点的小东西。</p></div><div class="space-grid">{spaces.map((space) => <a class={`space ${space.accent}`} href={space.href}><span class="number">{space.number}</span><span class="symbol">{space.symbol}</span><div><p>{space.english}</p><h3>{space.title}</h3><span>{space.description}</span><strong>进入空间 →</strong></div></a>)}</div></section>

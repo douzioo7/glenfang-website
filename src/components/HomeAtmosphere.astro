@@ -1,15 +1,6 @@
 <canvas id="home-pointer-art" aria-hidden="true"></canvas>
 
 <style is:global>
-  body[data-space="home"] {
-    background:
-      url('/images/paper-grain.svg'),
-      radial-gradient(ellipse at 98% 9%, #b8bf9b33, transparent 32%),
-      radial-gradient(ellipse at 0% 39%, #aebc9638, transparent 30%),
-      radial-gradient(ellipse at 100% 63%, #ceb88e38, transparent 32%),
-      radial-gradient(ellipse at 12% 89%, #a5b29a30, transparent 27%),
-      linear-gradient(180deg, #f7f3eb, #f4efe3 38%, #f8f4ec 65%, #ede8da);
-  }
   body[data-space="home"] .hero {
     border-bottom-color: #b6a47c36;
     box-shadow: 0 22px 48px -36px #87765540;
@@ -27,7 +18,7 @@
     background: linear-gradient(120deg, #dedbc980, #f6efe1a6);
     border-color: #b6a47c52;
   }
-  body[data-space="home"] .site-footer { border-top-color: #b6a47c52; }
+  body .site-footer { border-top-color: #b6a47c52; }
   #home-pointer-art { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
   @media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
     #home-pointer-art { display: none; }

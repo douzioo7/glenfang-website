@@ -2,6 +2,8 @@
 import '../styles/global.css';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
+import HomeAtmosphere from '../components/HomeAtmosphere.astro';
+import DouziMascot from '../components/DouziMascot.astro';
 import { site } from '../config/site';
 
 interface Props {
@@ -60,6 +62,8 @@ const structuredData = {
     <title>{pageTitle}</title>
   </head>
   <body data-space={Astro.url.pathname.split('/')[1] || 'home'}>
+    <HomeAtmosphere />
+    <DouziMascot />
     <SiteHeader currentPath={Astro.url.pathname} />
     <slot />
     <SiteFooter />
